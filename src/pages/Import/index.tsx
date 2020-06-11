@@ -23,19 +23,37 @@ const Import: React.FC = () => {
   const history = useHistory();
 
   async function handleUpload(): Promise<void> {
-    // const data = new FormData();
+    const data = new FormData();
 
-    // TODO
+    const [file] = uploadedFiles;
+
+    data.append('file', file.file);
 
     try {
-      // await api.post('/transactions/import', data);
+      await api.post('/transactions/import', data);
+
+      setUploadedFiles([]);
+      history.goBack();
     } catch (err) {
-      // console.log(err.response.error);
+      console.error(err.response.error);
     }
   }
 
   function submitFile(files: File[]): void {
-    // TODO
+    if (uploadedFiles.length) {
+      window.alert('Atenção! Você pode importar apenas 1 arquivo por vez.');
+      return;
+    }
+
+    const [file] = files;
+
+    const uploadedFile: FileProps = {
+      file,
+      name: file.name,
+      readableSize: filesize(file.size),
+    };
+
+    setUploadedFiles([uploadedFile]);
   }
 
   return (
